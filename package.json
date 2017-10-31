@@ -1,0 +1,14 @@
+{
+  "name": "FbCommentsManager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=resource/icon/dango.ico --prune=true --out=release-builds",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=resource/icon/dango.ico --prune=true --out=release-builds --version-string.CompanyName=VNA --version-string.FileDescription=VnAnime --version-string.ProductName=\"VnAnime App\"",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=resource/icon/dango.ico --prune=true --out=release-builds"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

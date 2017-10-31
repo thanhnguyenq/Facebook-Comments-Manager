@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <title>Facebook Comments Manager</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/master.css">
+  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+  <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script>if (window.module) module = window.module;</script>
+</head>
+<body>
+<div class="titlebar" style="-webkit-app-region: drag">
+  <i class="fa fa-star" aria-hidden="true"></i>
+  Facebook Comments Manager
+  <i class="fa fa-lg fa-cog" id="setting-btn" aria-hidden="true"></i>
+  <i class="fa fa-lg fa-window-minimize" id="minimize-btn" aria-hidden="true"></i>
+  <i class="fa fa-2x fa-times" id="close-btn" aria-hidden="true"></i>
+</div>
+<div class="toolbox">
+  <div class="left">
+    <label for="postid">Post ID</label>
+    <div class="input-group" style="margin-bottom: 10pt;">
+      <span class="input-group-addon"><i class="fa fa-id-card" aria-hidden="true"></i></span>
+      <input type="text" class="form-control" id="postid" placeholder="Post ID">
+    </div>
+    <button type="button" class="btn btn-primary" id="run-btn">Thực thi</button>
+    <button type="button" class="btn btn-secondary" id="refresh-btn"><i class="fa fa-refresh" aria-hidden="true"></i>
+ Nhập lại</button>
+    <!-- <button type="button" class="btn btn-danger" id="stop-btn"><i class="fa fa-ban" aria-hidden="true"></i>
+ Dừng tác vụ</button> -->
+  </div>
+  <div class="right">
+    <label for="filter">Lọc kết quả theo: </label>
+    <p id="filter-mode-status">Tên thành viên</p>
+    
+    <div class="input-group" style="margin-bottom: 10pt;">
+      <span class="input-group-addon"><i class="fa fa-filter" aria-hidden="true"></i></span>
+      <input type="text" class="form-control" id="filter" onkeyup="filter()">
+      <div class="input-group-btn">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Bộ lọc</button>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="#" onclick="changeFilterMode(0);"><i class="fa fa-user" aria-hidden="true"></i>
+ Tên thành viên</a>
+          <a class="dropdown-item" href="#" onclick="changeFilterMode(1);"><i class="fa fa-comment" aria-hidden="true"></i>
+ Nội dung bình luận</a>
+        </div>
+      </div>
+    </div>
+    <label>Trạng thái: </label>
+    <p id="res-status">Ô kê con dê!</p>
+  </div>
+  <div style="clear: both;"></div>
+</div>
+<div class="content">
+  <table class="table table-hover" id="result">
+  <thead>
+    <tr class="table-primary">
+      <th scope="col" style="width:18%;"><i class="fa fa-user" aria-hidden="true"></i> Thành viên</th>
+      <th scope="col" style="width:62%;"><i class="fa fa-comment" aria-hidden="true"></i> Bình luận</th>
+      <th scope="col" style="width:18%;"><i class="fa fa-clock-o" aria-hidden="true"></i>
+ Thời gian đăng</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</div>
+<script type="text/javascript" src="js/master.js"></script>
+</body>
+</html>

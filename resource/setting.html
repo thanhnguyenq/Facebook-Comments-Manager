@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <title>Setting</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/master.css">
+  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+  <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script>if (window.module) module = window.module;</script>
+</head>
+<body>
+<div class="titlebar setting" style="-webkit-app-region: drag">
+  <i class="fa fa-star" aria-hidden="true"></i>
+  Setting
+  <i class="fa fa-2x fa-times" id="close-btn" aria-hidden="true"></i>
+</div>
+<div style="padding: 20pt;">
+  <label for="access_token">Access Token</label>
+  <div class="input-group">
+    <span class="input-group-addon"><i class="fa fa-credit-card" aria-hidden="true"></i></span>
+    <input type="text" class="form-control" placeholder="Access Token" id="access_token" aria-label="Access Token">
+  </div>
+  <button type="button" class="btn btn-primary" id="setting-save-btn" style="margin-top:20pt">Lưu</button>
+</div>
+<script type="text/javascript" src="js/master.js"></script>
+<script type="text/javascript" src="js/setting.js"></script>
+</body>
+</html>
