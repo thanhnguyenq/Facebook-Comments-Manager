@@ -18,10 +18,6 @@ app.on('ready', () => {
   createApplicationMenu();
   openMainWindow();
 
-  // ipcMain.on('select-sw', (event, id) => {
-  //   mainWindow.webContents.send('select-sw', id);
-  // });
-
   ipcMain.on('open-setting', () => {
     if(settingWindow == null){
       openSettingWindow();
@@ -29,10 +25,6 @@ app.on('ready', () => {
       settingWindow.focus();
     }
   });
-
-  // ipcMain.on('size-custom', (event, w, h) => {
-  //   mainWindow.setSize(parseInt(w), parseInt(h));
-  // });
 });
 
 var openMainWindow = () => {
@@ -93,7 +85,9 @@ var createApplicationMenu = () => {
           label: 'Dev Tools',
           accelerator: 'Ctrl+Shift+U',
           click: function() {
-            settingWindow.openDevTools();
+            if (settingWindow) {
+              settingWindow.openDevTools();
+            }
           }
         }
       ]

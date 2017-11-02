@@ -13,7 +13,10 @@ function check_access_token(argument) {
   return true;
 }
 
-// Filter value
+
+/*********************************************************
+*********************  Filter  ***************************
+**********************************************************/
 // 0: By name(Default)
 // 1: By message
 
@@ -22,58 +25,131 @@ var filter_mode = 0;
 function changeFilterMode(mode) {
   filter_mode = mode;
   if(mode == 0) {
-    $("#filter-mode-status").text("Tên thành viên");
+    $("#filter-mode-status").text("Username");
   } else if(mode == 1) {
-    $("#filter-mode-status").text("Nội dung bình luận");
+    $("#filter-mode-status").text("Comment");
   }
 }
 
-// Close button
+/*********************************************************
+*******************  Close button  ***********************
+**********************************************************/
 $("#close-btn").click(function () {
   var window = remote.getCurrentWindow();
   window.close();
 });
 
-// Minimize button
+/*********************************************************
+*****************  Minimize button  **********************
+**********************************************************/
 $("#minimize-btn").click(function () {
   var window = remote.getCurrentWindow();
   window.minimize();
 });
 
-// Setting button
+/*********************************************************
+******************  Setting button  **********************
+**********************************************************/
 $("#setting-btn").click(function () {
   ipcRenderer.send('open-setting');
 });
 
+/****************************************************************
+************************* RUN  **********************************
+*****************************************************************/
+
 var num_result = 0;
-// Run scan
+
 $("#run-btn").click(function () {
   num_result = 0;
+  isStop = false;
 
   if(!check_access_token()) {
     return;
   }
 
-  $("#postid").prop('readonly', true);
+  $("#posturl").prop('readonly', true);
   $("#run-btn").prop('disabled', true);
+  $("#stop-btn").css('display', 'inline-block');
 
-  // Check Post ID
-  var post_id = $('#postid').val();
+  // Check Post URL
+  checkPostURL();
+});
 
-  if(post_id.match(/.*_\d+/g) == null)  {
-    notify("Lỗi", "Hãy kiểm tra lại Post ID");
-    $("#postid").prop('readonly', false);
+function checkPostURL() {
+  console.log("Check URL pattern");
+
+  // Pattern
+  var pattern = [/(?:https?:\/\/)?(?:w{3}\.)?(?:facebook|fb)\.com\/(.*)\/posts\/(\d+)/g,
+                /(?:https?:\/\/)?(?:w{3}\.)?(?:facebook|fb)\.com\/(.*)\/photos\/.*\/(\d+)\/\?.*/g,
+                /(?:https?:\/\/)?(?:w{3}\.)?(?:facebook|fb)\.com\/(.*)\/videos\/(\d+)/g];
+
+  var post_url = $('#posturl').val();
+  var match;
+
+  console.log(post_url);
+
+  for (var i = 0; i < pattern.length; i++) {
+    match = pattern[i].exec(post_url);
+    console.log(pattern[i]);
+    console.log(match);
+    if(match != null) break;
+  }
+
+  if(match == null) {
+    console.log("Check URL pattern => Fail");
+    console.log(match);
+    notify("ERROR", "Please check URL");
+    
+    $("#posturl").prop('readonly', false);
     $("#run-btn").prop('disabled', false);
-    $('#postid').val("");
+    $("#stop-btn").css('display', 'none');
+    return;
+  } else {
+    getRealPostId(match[1], match[2]);
+  }
+}
+
+function getRealPostId(page_id, post_id) {
+  console.log("API: Get page id");
+
+  $.ajax({
+    url: "https://graph.facebook.com/v2.10/" + page_id + "?access_token=" + access_token,
+  }).done(function (data) {
+    getComment(data["id"] + "_" + post_id);
+  }).fail(function (error) {
+    console.log("API: Get page id => Fail");
+    
+    if(error.responseJSON["error"]["message"].includes("Session has expired")) {
+      notify("ERROR", "Access Token is expired, please renew it!");
+    } else {
+      notify("ERROR", "Please check URL or Acces Tokken");
+    }
+
+    $("#posturl").prop('readonly', false);
+    $("#run-btn").prop('disabled', false);
+    $("#stop-btn").css('display', 'none');
+    return;
+  });
+}
+
+function getComment(real_id) {
+  console.log("API: Get comment");
+
+  //Check Stop
+  if(isStop) {
+    $("#res-status").text(".:Stoped:. " + num_result + " comment(s) found");
     return;
   }
 
-  console.log("Send API");
+  // Show result
+  $("#result").css('display', 'table');
 
   $.ajax({
-    url: "https://graph.facebook.com/v2.10/" + post_id + "/comments?limit=100&order=chronological&access_token=" + access_token,
+    url: "https://graph.facebook.com/v2.10/" + real_id + "/comments?limit=100&order=chronological&access_token=" + access_token,
   }).done(function(data) {
-    console.log("Success");
+    console.log("API: Get comment => Success");
+
     for (i = 0; i < data["data"].length; i++) {
       var name = "<a href='https://www.facebook.com/"+ data["data"][i]["id"] +"'>"+ data["data"][i]["from"]["name"] +"</a>";
       var message = data["data"][i]["message"];
@@ -85,30 +161,37 @@ $("#run-btn").click(function () {
 
     num_result += data["data"].length;
 
-    if ('next' in data["paging"]) {
+    if ('paging' in data && 'next' in data["paging"]) {
       recursive_send(data["paging"]["next"]);
     } else {
-      $("#res-status").text("Tìm thấy " + num_result + " kết quả");
+      $("#stop-btn").css('display', 'none');
+      $("#res-status").text(" " + num_result + " comment(s) found");
     }
   }).fail(function(data) {
-    console.log("ERROR 400");
-    if(data.responseJSON["error"]["message"].includes("Session has expired")) {
-      notify("Lỗi", "Access Token hết hạn, vui lòng thay token mới!");
-    } else {
-      notify("Lỗi", "Hãy kiểm tra lại Post ID");
-    }
-    $("#postid").prop('readonly', false);
+    console.log("API: Get comment => Fail");
+
+    notify("ERROR", "Please check URL or Acces Tokken");
+    $("#posturl").prop('readonly', false);
     $("#run-btn").prop('disabled', false);
-    $('#postid').val("");
+    $("#stop-btn").css('display', 'none');
     return;
   });
-});
+}
 
 function recursive_send(url) {
+  console.log("API: RE Get comment");
+
+  //Check Stop
+  if(isStop) {
+    $("#res-status").text(".:Stoped:. " + num_result + " comment(s) found");
+    return;
+  }
+
   $.ajax({
     url: url,
   }).done(function(data) {
-    console.log("Success");
+    console.log("API: RE Get comment => Success");
+
     for (i = 0; i < data["data"].length; i++) {
       var name = "<a href='https://www.facebook.com/"+ data["data"][i]["id"] +"'>"+ data["data"][i]["from"]["name"] +"</a>";
       var message = data["data"][i]["message"];
@@ -123,27 +206,53 @@ function recursive_send(url) {
     if ('next' in data["paging"]) {
       recursive_send(data["paging"]["next"]);
     } else {
-      $("#res-status").text("Tìm thấy " + num_result + " kết quả");
+      $("#stop-btn").css('display', 'none');
+      $("#res-status").text(" " + num_result + " comment(s) found");
     }
   }).fail(function() {
-    console.log("ERROR 400");
-    notify("Lỗi", "Hãy kiểm tra lại Post ID");
-    $("#postid").prop('readonly', false);
+    console.log("API: RE Get comment => Fail");
+
+    notify("ERROR", "Please check URL");
+    $("#stop-btn").css('display', 'none');
+    $("#posturl").prop('readonly', false);
     $("#run-btn").prop('disabled', false);
-    $('#postid').val("");
+    $('#posturl').val("");
     return;
   });
 }
 
 
-// Refresd
+/***************************************************************
+***********************  Reset  ********************************
+****************************************************************/
 
-$("#refresh-btn").click(function () {
-  $("#postid").prop('readonly', false);
-  $("#run-btn").prop('disabled', false);
-  $('#postid').val("");
-  $("#result tbody").empty();
+$("#reset-btn").click(function () {
+  stop();
+
+  // Wait 0.5s
+  setTimeout(function() {
+    $("#stop-btn").css('display', 'none');
+    $("#result").css('display', 'none');
+    $("#posturl").prop('readonly', false);
+    $("#run-btn").prop('disabled', false);
+    $('#posturl').val("");
+    $("#result tbody").empty();
+  }, 500);
 });
+
+/***************************************************************
+************************  Stop  ********************************
+****************************************************************/
+var isStop = false;
+
+$("#stop-btn").click(function () {
+  stop();
+  $("#stop-btn").css('display', 'none');
+});
+
+function stop() {
+  isStop = true;
+}
 
 /* Notify */
 
@@ -160,7 +269,9 @@ $(document).on('click', 'a[href^="http"]', function(event) {
     shell.openExternal(this.href);
 });
 
-/* Filter */
+/***************************************************************
+*************************  Filter ******************************
+****************************************************************/
 function filter() {
   var input = document.getElementById("filter");
   var filter = input.value.toUpperCase();
