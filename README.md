@@ -1,13 +1,21 @@
 # Facebook Comments Manager
 Manage commnent of specific post
 
-This app is built with Electron, Bootstrap , Facebook API to get all comment from specific post ID with USER ACCESS TOKEN
+This app is built with Electron, Bootstrap , Facebook API to get all comment from specific post URL with USER ACCESS TOKEN
 
+## Supported URL
+POST: 	`https://www.facebook.com/<PAGE_NAME | PAGE_ID>/posts/<POST_ID>`
 
-![Initialization](/screenshot/screen1.png?raw=true "Initialization")
+PHOTO: `https://www.facebook.com/<PAGE_NAME | PAGE_ID>/photos/.../<POST_ID>/?type=3&theater`
+
+VIDEO: `https://www.facebook.com/<PAGE_NAME | PAGE_ID>/videos/<POST_ID>/`
+
+## Screenshot
+
+![Screen1](/screenshot/screenshot1.png?raw=true "Screen1")
 ***
-![Initialization](/screenshot/screen2.png?raw=true "Initialization")
+![Screen2](/screenshot/screenshot2.png?raw=true "Screen2")
 ***
-![Initialization](/screenshot/screen3.png?raw=true "Initialization")
+![Screen3](/screenshot/screenshot3.png?raw=true "Screen3")
 ***
-![Initialization](/screenshot/screen4.png?raw=true "Initialization")
+![Screen4](/screenshot/screenshot4.png?raw=true "Screen4")
