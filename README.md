@@ -10,6 +10,14 @@ PHOTO: `https://www.facebook.com/<PAGE_NAME | PAGE_ID>/photos/.../<POST_ID>/?typ
 
 VIDEO: `https://www.facebook.com/<PAGE_NAME | PAGE_ID>/videos/<POST_ID>/`
 
+## How to get ACCESS TOKEN
+Step 1: Go to https://developers.facebook.com/ and register account
+
+Step 2: Go to https://developers.facebook.com/tools/explorer/ and copy a User Access Token to use in App
+(this token only valid in a hour, to get 3 months valid token you need to create new Facebook App ,then in [this page](https://developers.facebook.com/tools/explorer/) at top right conner change `Graph API Explorer` to your new app => click icon "i" at token box then click `Open in Access Token Tool` and finally click `Extend Access Token` at the bottom)
+
+Step 3: Go to Setting screen on App and change new token
+
 ## Screenshot
 
 ![Screen1](/screenshot/screenshot1.png?raw=true "Screen1")
